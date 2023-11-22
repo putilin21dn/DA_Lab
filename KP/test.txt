@@ -1,0 +1,185 @@
+20
+How to manage the status of a telegram bot
+State management is a fundamental aspect of creating telegram bots, allowing us to effectively manage user interaction and provide a more personalized experience.
+State management is a concept that makes the entire process of user interaction systematic and convenient. Without this mechanism, your bot will act like a person suffering from amnesia, forgetting previous user actions and not being able to provide a consistent experience.
+Imagine that you are developing a bot for a store. The user starts a dialog with the bot, adds the product to the cart, looks through the catalog, and then asks a question about delivery. Without state management, the bot would have to collect all this information again in each new message, which would be not only inefficient, but also annoying for the user.
+With state management, the bot can remember the current dialog context, cart status, selected products, and even previous user questions.
+When we talk about the concept of state in telegram bots, we are referring to the way in which the bot stores information about the current context of the dialog with the user. This context can include selected options, task progress, or any other information that is necessary to process user requests. State management allows the bot to be more informed and context-oriented during a dialog with the user.
+Imagine that you are developing a bot for ordering pizza. The state concept will let the bot know that the user has already selected the pizza size, dough type, and started selecting additives. Without state management, the bot would have to ask the user for all these details every time, which could be tedious and inefficient.
+Depending on your bot's needs, you can use local storage or remote storage.
+Local storage: In this case, the status data is stored on the server where your bot is running. This is a quick and easy way to manage your state. However, if the server is restarted or the bot is restarted, the status data may be lost. Sample code on the library telebotfor local storage:
+import telebot
+bot = telebot.TeleBot('YOUR_BOT_TOKEN')
+user_states = {}
+@bot.message_handler(func=lambda message: True)
+def handle_message(message):
+    chat_id = message.chat.id
+    if chat_id not in user_states:
+        user_states[chat_id] = 'start'
+    if user_states[chat_id] == 'start':
+        user_states[chat_id] = 'next_state'
+    elif user_states[chat_id] == 'next_state':
+        user_states[chat_id] = 'start'
+4
+Cross-Platform System Programming Guide for UNIX & Windows: Level 1
+In this tutorial we'll learn how to write cross-platform code in C using the system functions on popular OS (Windows, Linux/Android, macOS & FreeBSD): file management functions and file I/O, console I/O, pipes (unnamed), execution of the new processes. We're going to write our own small helper functions on top of low-level userspace system API and use them so that our main code can run on any OS without modifications. This tutorial is Level 1, the easiest. I split the difficult stuff into parts so the code samples here shouldn't be overwhelming for those who has just started to program in C. We'll discuss the differences between the system API and how to create a cross-platform programming interface that hides all those differences from the user.
+I've been writing cross-platform software in C for a long time already, and I want to share my experience with the others. I do it with the hope that this tutorial will be useful, helping you to learn the system programming or perhaps to port an existing app from one OS to another.
+One of the most inconvenient things in C programming is the requirement to support multiple OS because each OS has a different system API. For example, if we want our app to run on Linux and Windows, then we'd need to write 2 different programs in C. To overcome this problem we may:
+Switch to a different language (Go, Python, Java, etc.) which provides us with (almost) complete cross-platform system library. Even so, it's not the right solution for all possible scenarios. What if we want to write a high-performance server software such as nginx? We absolutely need C. What if we need to build our program logic around several low-level C libraries? Although we can write the necessary library bindings for another language by ourselves, but instead we can just use C. What if we want our app to run on embedded systems with limited hardware resources (CPU, memory)? Again, we need C.
+9
+Why write in C++ in 2022?
+C++ is a programming language whose foundations were laid more than 40 years ago, but which is still ubiquitous. In this article, we will find out where and why it is used, and discuss whether it has a future.
+Where is C++used today?
+C++ is everywhere. Code written in C++ can be found on your phone, in your washing machine, in your car, on planes, in banks, and anywhere else you can imagine.
+But let's be more specific. Many image applications, such as Adobe Photoshop or Illustrator, are written in C++. 3D games are also often written in C++. Software for 3D animation, modeling, and rendering is also mostly written in C++. Image manipulation is a fairly complex and resource-intensive area that requires speed and proximity to C++hardware.
+But working with images is far from the only area where C++dominates. Most likely, the browser you are using to read this article was also written in C++, such as Chrome and Firefox.
+If we go even lower and look at compilers and operating systems, many of them are written in C++. If not, it's most likely C.
+But these are still just examples within the desktop world.
+In the world of enterprise software, of course, you will find other languages, but where performance is critical, it is quite reasonable to choose C and C++.
+In the embedded world, where both memory and CPU are more limited than desktop computers, C++ is thriving. Whether you're looking at your smartwatch, your phone, turning on the washing machine, getting in the car and turning on the ignition, you should feel a little grateful for the unknown C++ developer who managed not to mess things up because of a segmentation fault right after launch.
+8
+Research of Copy-on-Write mode in pandas. Part 3
+The introduction of Copy‑on‑Write (CoW) mode in the pandas library is a change that violates backward compatibility and will have some impact on existing code that uses pandas. We'll figure out how to adapt the code to new realities and make it work without errors when CoW mode is enabled by default. Now it is planned to do this in the pandas 3.0 version, which is expected to be released in April 2024. In the first article in this series, we dealt with the peculiarities of CoW behavior, and in the second, we talked about performance optimization related to the new pandas operating mode.
+We plan to add an "alarm mode" to the system, in which it will issue warnings when performing any operation whose behavior changes when CoW is enabled. These warnings will attract a lot of user attention, so the possibility of their appearance should be treated with caution. This article discusses some of the typical code problems and how you can adapt it so that its behavior does not change after enabling CoW.
+Chain assignment
+Chained assignment is an action where the state of an object changes during two consecutive operations.
+import pandas as pd
+df = pd.DataFrame({"x": [1, 2, 3]})
+df["x"][df["x"] > 1] = 100
+The first operation selects the "x" column, and the second operation limits the number of rows. There are many different combinations of these operations (for example, in combination with locoriloc). When using CoW, none of these combinations will work. An attempt to apply them will not lead to silent inaction of the system, but to the issuance of an exception ChainedAssignmentErroraimed at ensuring that the corresponding patterns are removed from the code.
+6
+Practical guide to processes and threads (and more) in Python
+During my mentoring of novice developers, I noticed that most of the questions are related to the following topics: competitiveness, concurrency, and asynchrony. They are often asked during job interviews, and this knowledge allows you to write more efficient and productive systems at work. So I decided to organize my vision and experience in the form of an article.
+The goal is to use examples to tell you:
+About threads, processes, and coroutines.
+About the Global Interpreter Lock and its restrictions.
+CPU and I/O bound loads.
+What is the use of ThreadPool and ProcessPool?
+11
+Introduction to Python
+In this article, we will cover the basics of Python. We are getting closer and closer to the goal.In general, we will soon start working with the main libraries for Data Science and use TensorFlow (for writing and deploying neural networks, you know Deep Learning).
+Installation
+Python can be downloaded from python.org. However, if it is not already installed, then
+I recommend the Anaconda distribution package instead, which already includes most of the libraries needed for working in the field of data science.
+If you don't use the Anaconda distribution, then don't forget to install the pip package manager, which allows you to easily install third-party packages, as we will need some of them. You should also install a much more user-friendly interactive IPython shell. Please note that the Anaconda distribution comes with pip and IPython.
+Whitespace characters
+Many programming languages use
+curly brackets to delimit code blocks. Python uses indentation:
+The IPython shell has a" magic " %paste function that correctly inserts everything that is in the clipboard, including whitespace characters.
+Modules (Importing libraries)
+Some Python programming environment libraries are not loaded by default. In order to use these tools, you need to import the modules that contain them.
+8
+C++ language
+Here is a tutorial on the basics of the C++ language. When creating it, we were inspired by the course "The Art of Developing in Modern C++ " at Courser, created with the support of Yandex, and the course "Programming Basics and Methodology", which was taught in 2014-2021 at the HSE Faculty of Computer Science.
+The C++ language is almost 40 years old, but it is still very relevant and in demand. It has had a huge impact on the industry and other languages. C++ was developed by Bjarne Stroustrup in the early 1980s as an extension of the C language (and was even originally called "C with Classes").
+However, you don't need to know C to learn C++. However, we assume that you are familiar with the basics of computer science and have some school-level programming language.
+However, C++ is in many ways the exact opposite:
+it is a compiled language, not an interpreted one;
+C++ is a language with static rather than dynamic typing;
+in C++, manual memory management is possible (as opposed to automatic garbage collection).
+To turn the source code of a C++ program into an executable file for a specific processor architecture, the program must be compiled. There are several popular C++compilers available:
+20
+C++
+Since 1998, the International Committee for Standardization of C++ has been issuing standards-versions of the language that describe its capabilities. First of all, these are guidelines for compiler creators, but if there are any disputes, it is always useful to refer to the standard. We will focus on the C++20 standard, and here you can find a draft of the future standard. It is important to understand that the standard defines only general requirements and does not fix implementation details, which may differ between compilers.
+To check whether your version of the compiler supports a particular feature of C++, we recommend using a special table.
+The following English-language resources will be useful for you to study:
+cppreference.com -online C++documentation;
+isocpp.org -Standard C++ Foundation website;
+C++ Core Guidelines-C++ guidelines by Bjarne Stroustrup and Herb Sutter;
+godbolt.org -Compiler Explorer, an online compiler;
+learncpp.com -modern C++tutorial;
+hacking C++ - a visual reference book on C++ with pictures and infographics.
+In the text, we will often refer to the English version. cppreference.com and to the English Wikipedia.
+You can write a program for C++ in any text editor, but it is more convenient to use the development environment (IDE). IDEs include a code editor with syntax highlighting, and they also allow you to compile, run, and debug programs.
+IDE Examples:
+Microsoft Visual Studio Community
+Eclipse CDT
+Code::Blocks
+Qt Creator
+Xcode
+We expect that you will be able to figure out how to configure and use the development environment yourself, and we will not focus on this. In our examples, we will run the compiler from the console.
+Our textbook is accompanied by a set of tasks on relevant topics. You can submit them to an automatic verification system. Some tasks require you to write a full-fledged program, while others require you to submit only the code of a function or class. Please note that all issues are analyzed with author's solutions. You can find the analysis at the end of the chapters.
+Now let's write the first program in C++.
+12
+What is a telegram bot and how to use it
+I will immediately note that when talking about bots, I will mean telegram bots, since I have not used bots from other applications and do not have a complete understanding of their work. However, the general concepts hardly differ from those given in the article.
+From the very beginning of the appearance of telegram bots, I heard a lot of talk about how they can be successfully used in business, I tried to "torment" various bots, but did not immediately find their applications for myself. The reason for this was that I didn't fully understand what a bot is, how it works, and what its meaning is. For me, the bot was-in some mythical way, which can be programmed for anything: it can sell goods, tell the dollar exchange rate, and find the necessary news on request... That is, it is a smart monster that can do anything on the Internet, the main thing is to program it correctly. Most likely, such misunderstandings arose due to incorrect presentation of information about bots.:
+a bot that finds the weather anywhere;
+a bot that sells certain products;
+a bot that searches for ads in avito.
+In fact, this is not quite the case. It's not a bot that finds the weather, and it's not a bot that searches for ads in Avito. The user finds a site that is programmed for this, and the bot simply transmits information from this site to the user. It would be more correct and understandable to say: a bot that transmits information from the site about the weather, or a bot that transmits up-to-date information from a site that searches for information about new ads in avito. In other words, the bot always has some third-party program code that performs all its functions and transmits information to the bot.
+The bot itself can't do anything. A bot is one of the most convenient tools for communication between a person and a site (in a particular case). For example, a bot can receive a request from a human, transmit this request to the site, and transmit the response from the site back to the person.
+The easiest way is to compare the bot with the usual input/output devices, such as a keyboard and a monitor. Neither the keyboard nor the monitor "can do anything" themselves, they simply transmit information from the computer and back in a convenient form for a person.
+Practical application of telegram bots
+Telegram bots are now more relevant than ever. At the time of writing, the number of telegram users has exceeded the number of Votsap users in Russia. This means that there is a very high probability that your client is using the Telegram app.
+But even for such a simple bot, it is not enough just to start a bot and configure something there, in Telegram. To receive and process messages from the telegram bot, you need to write a program, let's call it "Bot message handler", which will communicate with the bot. You can do this either on your own domain, if you have one, or on some third-party service like bot constructors. I've never used them, but I think there are a lot of them now.
+In a schematic view, the exchange of information with the user looks something like this:: First, the client in the telegram app goes to the bot's page and writes the /start command to it. In response to the /start command, the bot's message handler sends the client the response: "Hello! How are you? "(see picture below)
+18
+Python Programming Language Basics in 10 Minutes
+On the Poromenos website' Stuff has
+published an article that briefly
+explains the basics of the Python language. I offer you a translation of this article. The translation is not literal. I have tried to explain in more detail some points that may not be clear.
+If you are going to learn Python, but you can't find a suitable guide, then this
+article will be very useful to you! In a short time, you will be able to learn the
+basics of the Python language. Although this article often relies
+on the fact that you already have programming experience, I hope
+this material will be useful even for beginners. Read each paragraph carefully. Due to
+the conciseness of the material, some topics are considered superficially, but contain all
+the necessary metrial.
+Basic Properties
+Python does not require explicit declaration of variables, and is a case-sensitive (var is not equivalent to Var, or VAR is three different variables) object — oriented language.
+Syntax
+First, it is worth noting an interesting feature of Python. It does not contain operator brackets (begin..end in pascal or {..}in C), instead of this, blocks are indented: spaces or tabs, and the input to the block from statements is made by a colon. Single — line comments start with the pound sign "#", while multi-line comments start and end with three double quotes """"".
+To assign a value to a variable, use the " = " sign, and for comparison —
+"==". The "+ = "operator is used to increase the value of a variable or add it to a string, and the "— = " operator is used to decrease it. All of these operations can interact with most types, including strings. For example
+Data structures
+Python contains data structures such as lists, tuples, and dictionaries. Lists are similar to one-dimensional arrays (but you can use a list that includes lists — a multidimensional array), tuples are immutable lists, dictionaries are also lists, but indexes can be of any type, not just numeric. "Arrays" in Python can contain any type of data, meaning that the same array can contain numeric, string, and other data types. Arrays start at index 0, and the last element can be obtained at index -1. You can assign functions to variables and use them accordingly.
+3
+Python
+Python is a versatile and powerful programming language that has gained immense popularity in recent years. With its clean and easy-to-read syntax, Python has become a favorite choice among developers of all levels.
+One of the main advantages of Python is its extensive library ecosystem. The Python Package Index (PyPI) hosts thousands of third-party libraries that cover a wide range of functionalities. Whether you need to work with data analysis, web development, machine learning, or artificial intelligence, Python has a library for you.
+Python's simplicity and readability make it an ideal language for beginners. Its syntax resembles pseudo-code, making it easy to understand and learn. Additionally, Python has a supportive online community that provides extensive documentation, tutorials, and forums for troubleshooting.
+4
+python
+Python's versatility is further enhanced by its cross-platform compatibility. It runs on various operating systems like Windows, macOS, and Linux, allowing developers to create applications for different platforms effortlessly.
+Python's popularity is also due to its use in data science and machine learning. Libraries like NumPy, Pandas, and TensorFlow enable developers to efficiently process and analyze large datasets. Python's simplicity, combined with these powerful libraries, has made it the go-to language for data scientists and researchers.
+Not only is Python used extensively in the tech industry, but it also has applications in other domains such as finance, healthcare, and academia. Its flexibility allows it to adapt to various requirements, making it a valuable tool in different fields.
+In conclusion, Python's versatility, simplicity, and vast library ecosystem have solidified its position as one of the most popular programming languages. Whether you are a beginner or an experienced developer, Python provides the tools and resources to tackle a wide range of projects efficiently.
+4
+c++
+C++ is a powerful programming language that has been widely used in the software industry for several decades. Developed as an extension of the C programming language, C++ enhances the capabilities of C by providing additional features such as object-oriented programming (OOP) and generic programming.
+One of the key advantages of C++ is its efficiency. It allows programmers to write high-performance code that can run quickly and consume minimal resources. This makes it a popular choice for developing applications that require speed and resource optimization, such as real-time systems, game engines, and embedded systems.
+C++ supports OOP, which allows developers to organize their code in a modular and structured manner. Through concepts like classes and objects, inheritance, and polymorphism, developers can write reusable and flexible code. This promotes code reusability, maintainability, and scalability, making it easier to build complex software systems.
+Another strength of C++ is its extensive standard library. The Standard Template Library (STL) provides a collection of data structures and algorithms that can be readily used in C++ programs. The STL includes commonly used containers like vectors, lists, and maps, as well as algorithms for sorting, searching, and manipulating data. This library saves developers time and effort by providing pre-implemented solutions for various programming tasks.
+4
+c++
+C++ also offers low-level programming capabilities through its support for pointers, memory management, and direct hardware access. This allows developers to have fine-grained control over system resources, which can be important in scenarios like operating system development or building device drivers.
+Furthermore, C++ is widely supported and has a large and active community of developers. This means that finding resources, tutorials, and assistance is relatively easy, making it an attractive language for both beginners and experienced programmers.
+Despite its many strengths, C++ does have a steep learning curve and can be complex compared to some other programming languages. It requires a thorough understanding of its features and careful attention to memory management to avoid potential pitfalls like memory leaks or undefined behavior.
+In conclusion, C++ is a versatile and powerful programming language that combines the efficiency of C with the flexibility of OOP. Its performance, rich standard library, and low-level capabilities make it a preferred choice for developing high-performance and resource-efficient applications. While it may have a learning curve, the rewards of mastering C++ are well worth the effort for those seeking to build robust and efficient software systems.
+4
+telegrambot
+Telegram bots have become increasingly popular in recent years, providing users with a wide range of functionalities and services. These bots, built on top of the Telegram messaging platform, offer a convenient and interactive way to automate tasks, provide information, and engage with users.
+One of the key advantages of Telegram bots is their accessibility. With nearly 500 million monthly active users, Telegram provides a massive user base for bot developers to reach. By creating a bot, businesses and individuals can easily connect with their audience, deliver content, and provide services directly through the Telegram platform.
+Telegram bots can be designed to perform a variety of tasks. For example, a news bot can deliver the latest headlines and articles to users, keeping them informed and up-to-date. Similarly, a weather bot can provide real-time weather information, helping users plan their day accordingly. Additionally, bots can be used for customer support, answering frequently asked questions and resolving user queries in a timely manner.
+Creating a Telegram bot is relatively straightforward. Developers can use Telegram's Bot API and various programming languages like Python or JavaScript to build and deploy bots. With the Bot API, developers have access to powerful features such as message handling, inline keyboards, and file sharing. This allows for a highly interactive and engaging user experience.
+4
+telegrambot
+Telegram also provides robust bot management tools, enabling developers to monitor bot usage, track analytics, and customize bot behavior based on user interactions. This empowers developers to continuously improve their bot's performance and adapt to user requirements.
+Security is a top priority for Telegram, and the platform offers end-to-end encryption for bot-to-user conversations, ensuring that user data and interactions remain private and protected. This level of security is especially important for bots that handle sensitive information or provide personalized services.
+Furthermore, Telegram offers a vast ecosystem of third-party tools and libraries to enhance bot functionality. These tools include natural language processing libraries, machine learning frameworks, and integrations with other popular services like Google Maps or payment gateways. This allows developers to expand the capabilities of their bots and create more advanced and personalized experiences for users.
+In conclusion, Telegram bots provide a versatile and interactive way to automate tasks, deliver content, and engage with users on the Telegram platform. With a large user base, accessible APIs, and robust bot management tools, building and deploying Telegram bots has become easier than ever. Whether for businesses or individuals, Telegram bots offer a convenient and powerful tool to connect with users and deliver valuable services.
+12
+Programming
+Programming is the art of instructing computers to perform specific tasks by writing lines of code. It is a highly valuable skill in today's digital age, as it powers the software applications and technologies that drive our modern world.
+Programming allows us to create new tools, solve complex problems, and bring innovative ideas to life. It is a creative and logical process that involves breaking down a problem into smaller, manageable steps and designing algorithms to solve them.
+One of the main benefits of programming is automation. By writing code, we can automate repetitive tasks, saving time and increasing efficiency. For example, a simple program can automate data entry, generating reports, or even controlling physical devices like robots or IoT devices.
+Programming languages serve as the foundation for writing code. There are numerous programming languages available, each with its own syntax, features, and purposes. Popular languages like Python, Java, C++, and JavaScript enable developers to build a wide range of applications, from web and mobile apps to machine learning and artificial intelligence systems.
+Learning to program not only equips individuals with a valuable skill set but also enhances critical thinking and problem-solving abilities. It teaches systematic thinking and logical reasoning, enabling programmers to analyze complex problems and develop structured solutions.
+The process of programming involves several key steps. First, understanding the problem or goal is crucial for creating an effective solution. This requires gathering requirements, analyzing data, and identifying potential challenges.
+Once the problem is properly defined, programmers begin designing the solution by creating algorithms and flowcharts. This step helps break down the problem into smaller sub-problems and defines the logic to solve them.
+After designing, the actual coding phase begins. Programmers write lines of code using the chosen programming language, utilizing various syntax rules, data structures, and control flow statements.
+Next comes testing and debugging. It is essential to thoroughly test the code to ensure it functions correctly and produces the desired results. Debugging helps identify and fix any errors or issues in the code.
+Finally, documentation is crucial for a well-maintained codebase. Documenting code provides clarity to other programmers who might work on the project, improving collaboration and facilitating future updates or maintenance.
+With the rapid advancement of technology, the demand for skilled programmers continues to grow. Whether you aspire to become a software developer, data scientist, or a technology entrepreneur, learning programming opens doors to exciting career opportunities and empowers you to bring your ideas to life.
+In conclusion, programming is a powerful skill that enables us to create, automate, and solve problems in the digital world. By learning programming languages, mastering algorithms, and following a systematic approach, we can develop software applications and technologies that shape the future of our society. Embracing programming not only enhances our problem-solving abilities but also opens new avenues for personal and professional growth.

@@ -1,0 +1,169 @@
+10
+programming,c++
+RESTinio-0.7.0: first major release in three years
+In version 0.7.0, we switched from C++14 to C++17. This is probably not the best of our solutions, because someone still has to stay in C++14 without being able to upgrade to C++17, but we no longer saw the point of holding on to C++14.
+The benefit of moving to C++17 was primarily that we managed to get rid of such dependencies as optional-lite, string_view-lite, and variant-lite, since all of this is now available in the standard library. So it remains to say a big thank you to Martin Moene for his work on writing and maintaining these libraries, they have helped us a lot for six years, but we will continue with stdlib 🙂
+Although there is still a dependency on expected-lite, but you will have to live with it for a long time. If we moved to the 17th advantages only in 2023, then the transition to C++23 will have to wait another five or six years, or even nine or ten 😆
+The benefit of the 17th standard was also shown in the fact that in some places we were able to throw out complex (and not very) template constructions in favor of simple if constexpr and fold expressions.
+So let's go further in the framework of C++17. If this upsets anyone, then forgive me for being so frank, but no one pays us to support C++14.
+Initially, RESTinio used nodejs / http-parser as a parser for HTTP requests. But a few years ago, its development and support stopped. Therefore, in version 0.7.0, we moved to nodejs / llhttp. Actually, this move was the main motivation for the release of version 0.7.0.
+At the same time, we have updated Catch2. Starting from version 3.0, this library is no longer header-only and requires compilation.
+When we switched to Catch2 v3, we stopped using a self-built build system for RESTinio development. In other words, most of the work used to be done via MxxRu, while CMake was a backup system. But since v. 0. 7. 0, the main and only system is CMake (with all my dislike for this "product", but what can I do). Well, if so, we tried to update and modernize CMake scripts at home. I really hope that connecting RESTinio to the project via CMake will now be easier.
+By the way, we haven't completely abandoned MxxRu yet, and MxxRu continues to be used for dependency management. So if you want to take RESTinio from the repository and fix something there, then in addition to CMake, you will still need both Ruby and MxxRu.
+Perhaps, sometime in the bright future, we will move to vcpkg or Conan. And maybe the committee will give birth to something standard by then... Well, you never know, but suddenly?
+12
+python,programming,telegrambot
+PyTelegramBotAPI on the example of a feedback collection project #1
+Next, you need to save your token. There are several ways to do this, the best one being environment variables. But at the very beginning, I indicated that I intend not to use complex constructions for beginners. So let's use a different method, namely: create a new file, call it config.py and write the token there as a constant (Constant is a non-mutable variable. There are no full-fledged constants in Python, so we will use the official replacement, namely, write the TOKEN variable in capital letters)
+Our bot will be built on functions, many of which will have decorators. If you do not know these topics, I advise you to read them, otherwise you will not understand much.
+Let's move on to writing the bot itself. Open the main file.py and create a bot object, which we will continue to work with in the future. Also, we will immediately launch the bot.
+import telebot
+from config import TOKEN
+bot = telebot.TeleBot(TOKEN)
+if __name__ == '__main__':
+    print('Бот запущен!')
+    bot.infinity_polling()
+The __name__ == '__main__ ' construction is used here. Please check it out if you don't know why it is used.
+Let's analyze the code. In the first line, we imported the telebot library, which we will work with. You may be surprised by the name of the library, because we downloaded PyTelegramBotAPI, and we import telebot. This is normal, telebot is the name of the module that we import from the PyTelegramBotAPI library. This module contains the main classes and functions for working with bots in Telegram.
+In the second line, we imported the token we received earlier. In 4, we received an object of the TeleBot class, and we will continue to work with the bot variable often (for example, we will use it to send messages).
+9
+python
+Network Device Management: Orange Pi, OpenWRT, and Python
+The modern world of the Internet of Things (IoT) and smart devices requires flexibility and power when managing network equipment. Finding the right solution that combines simplicity, reliability, and availability at the same time can be challenging. Today I want to consider one of these combinations: a single-board Orange Pi computer with OpenWRT + Python operating system.
+The Orange Pi is a powerful and compact alternative to other single-board computers. It has a lot of computing power, expandable features, and a lot of interfaces. OpenWRT, in turn, is a lightweight and flexible operating system specifically designed for routers and network devices. The OS offers extensive options for configuring and extending network functions. Well, Python is one of the most popular programming languages in the world.It provides simplicity and efficiency for developing scripts and automating tasks.
+Consider using an Orange Pi with OpenWRT installed on it and a script developed in Python. With such tools at hand, let's try to create our own network management system! In the end, you will be able to reproduce this example yourself and easily adapt it to your needs, opening up new opportunities in the field of network device management.
+Python is a powerful and mainstream programming language. It provides ample opportunities for networking. Here are some of its pros and cons related to network programming.
+Positive:
+1. Ease of Use: Python has a simple and intuitive syntax that makes it accessible to beginners and makes it easier to develop and debug code for networking.
+2. Rich Standard Library: Python comes with an extensive standard library that contains modules and tools for working with various network protocols, including UDP. This makes it easier to develop network applications and reduces development time.
+3. Cross-platform: Python is supported on various operating systems, which makes it a universal choice for creating platform-independent network applications. You don't have to rewrite the code for each platform separately.
+4. Socket Support: Python provides a powerful and convenient socket API that makes it easier to create and manage network connections at various levels, including UDP. You can use sockets to send and receive data packets over the network.
+17
+c++
+About storing images in memory with alignment
+In conversations with colleagues, as well as in separate posts on forums, I noticed that even relatively experienced developers sometimes do not really understand the features of storing images in memory. If you know what 64-x byte alignment is, as well as terms like "LineWidth/StepWidth, Stride", "Alignment Gaps", and are also aware of the size of cache lines and pages, then you probably won't be interested. and others, especially those who are interested in image processing, can get acquainted with the proposed material, and perhaps find something new and useful for themselves. Under the cut there will be a little code in C and assembly, a couple of LabVIEW screenshots, and it is also assumed that the reader has basic knowledge of OpenCV. For experiments, you will need a computer with a pebble that supports AVX2, all this under Windows 11 x64.
+As usual, there is a disclaimer that I have nothing to do with any of the products mentioned below, and this purely technical post does not carry any advertising load.
+"Building.jpg" is an image from OpenCV examples (usually used for Hough transform exercises). Suppose we want to do something with the image pixel by pixel (well, for example, it's banal to invert) and write the result in Dst, this can be done by a single pass through all the pixels and I know that you can simply write
+If you look at where the addresses of the "zero" pixels Src.data and Dst.data in both images point, you may notice that they are aligned on the sixty-four byte boundary (this means that the address is divisible by 64 without remainder, the last six bits of these addresses are reset, it has become for example, if the last two digits in the hexadecimal representation are 00, 40, 80, or C0, then the address is uniquely divisible by 64):
+Why do we need this alignment? Mostly for performance, since in many (I'll be very careful to say "in most")cases modern processor architectures have cache lines that are just 64 bytes long. That is, even if you request a single byte from RAM, all its sixty-three neighbors are also loaded into the cache. When accessing a neighbor, if it is already in the cache, memory accesses do not occur, but if it is located in a neighboring line that has not yet been loaded, then the next 64 bytes are loaded.
+This is actually very easy to check — reserve, say, a gibibyte of memory, and then go through the beginning of the array sequentially, or through the entire array in steps of 64 bytes, measure the execution time, and you will instantly see the difference, although the number of iterations is the same here and there:
+When accessing "insufficiently" aligned data, for example, when accessing 32 bytes (we want to process 32 bytes in one iteration) with the standard 16-byte alignment provided by standard malloc (), you can hit the border of two cache lines, which will give us a penalty in the form of a double load in case of a miss instead of one. In addition, some SIMD commands also require alignment, AVX-512 operates just with 64-byte data, so by aligning the data "to the maximum", we will meet the requirements of all AVX instruction sets (since AVX requires alignment by 16, and AVX2 — by 32 bytes). This does not mean that you can't access unaligned addresses at all, just that AVX extensions have different commands to access aligned and unaligned data, for example, the MOVDQU and MOVDQA pairs, or MOVAPS and MOVUPS, and if you use a command designed to load aligned data in relation to unaligned data, an exception will be thrown, and your application will crash in your hands (or in the debugger).
+But we will go a little further than the zero pixel. You may have noticed this method of creating a Mat object, with a couple of additional parameters in the form of an external pointer and a step:
+Let's make it so that not only the most zero (well, or the first one — this is who you think) pixel, but also each line of the image would start with an address that is a multiple of 64. This automatically happens when the image width is 64, 128, 192, 256 and so on pixels, but in our case, the image size is 868x600 (I did not accidentally take it) and 868 is completely divided by 64, we need a width of 28 bytes more — 896. To round it up, we need a simple a macro that I stole from somewhere in the depths of StackOverflow:
+#define ALIGN(__intptr, __align) ((__intptr) - 1u + (__align)) & -(__align)
+Well, to allocate memory, I will use the same _aligned_malloc, but now like this:
+int LineWidth = ALIGN(Width, 64);
+uint8_t* pDst;
+pDst = (uint8_t*)_aligned_malloc(Height * LineWidth * sizeof(uint8_t), 64);
+Mat DstAligned(Height, Width, CV_8U, pDst, LineWidth);
+println("Alignment: Width = {}, aligned line width = {}", Width, LineWidth);
+By itself, the Mat constructor does not allocate memory for this call, it simply uses the memory already allocated from the outside. It should be remembered that OpenCV does not deal with freeing up memory in this case, so we will have to call _aligned_free (pDst) and it is _aligned_free (), and not just free ().
+16
+python,programming
+Essential Python Libraries for Python Programming
+Python is a high-level, general-purpose programming language that has become one of the leading names in the programming community. It ranges in the ability from developing simplistic applications to carrying out complex, mathematical calculations with an equal level of ease.
+Being one of the leading programming languages means that there is no scarcity of great frameworks and libraries available to toy with. A programming language library is simply a set of modules and functions that eases some specific operations using the programming language.
+So, here are 6 essential Python libraries for Python programming that every Python developer or aspirant must know about:
+Keras
+Type – Neural Networks Library
+Initial Release – March 2015
+Written in Python, Keras is an open-source neural-network library. Designed especially for enabling fast experimentation with deep neural networks, Keras prioritizes for being user-friendly, extensible, and modular.
+In addition to providing an easier mechanism for expressing neural networks, Keras also offers some of the best features for compiling models, processing datasets, and visualizing graphs. On the backend, Keras makes use of either Theano or TensorFlow.
+Due to the fact that Keras creates a computation graph by using backend infrastructure and then uses it to perform operations, it is slower than other machine learning libraries. Nonetheless, all models in Keras are portable.
+Highlights:
+Easy to debug and explore as it is completely written in Python
+Features several implementations of the commonly used neural network building blocks such as activation functions, layers, objectives, and optimizers
+Incredible expressiveness and flexibility makes it ideal for innovative research
+Offers several pre-processed datasets and pre-trained models like Inception, MNIST, ResNet, SqueezeNet, and VGG
+Provides support for almost all neural networks models, including convolutional, embedding, fully connected, pooling, and recurrent. Moreover, these models can be combined to develop even more complex models
+Runs smoothly on both CPU as well as GPU
+12
+python,programming
+Constraint Programming or how to solve the traveling salesman problem by simply describing it
+Perhaps the most popular programming paradigm is imperative programming. But this is not the only type of programming, functional and logical programming are widely known. Constraint Programming/Limited programming) is not so popular. But it is a very powerful tool for solving combinatorial problems. Instead of implementing an algorithm that solves the problem, and then spending a lot of time debugging, refactoring, and optimizing it, programming with constraints allows you to simply describe the model in a special syntax, and a special program (solver) will find the solution for you (or tell you if there are none). Impressive, isn't it? It seems to me that every programmer should be aware of this possibility.
+Probably the most commonly used constraint programming tool (at least for educational purposes) is minizinc. It provides an IDE for declaring models and several built-in solvers for finding the answer. You can download the program from the official website.
+Let's look at an example of solving the model and start with the cryptoarithmetic problem. In this type of problem, all letters should be replaced with numbers with two conditions:
+minizinc-python solves the second problem by providing a way to call minizinc models from python, the library will run minizinc, serialize your input, and parse the output, but the programmer still has to write quite a few lines of code. We can look at an example of solving a quadratic equation
+Personally, it is problematic for me to remember and recreate such an example, and the minizinc model (which is only 4 lines of code) is represented as a string, so the IDE and python can't highlight the syntax and provide any help and static checks for you.
+Why not hide solver search, parameter instantiation, and provide a way to implement models in pure Python?
+To get started with zython, you must have python 3.6+ and minizinc installed in the default path or available in $PATH. After that, you can download the package itself and check the installation.
+If everything was installed correctly, you should not see any exceptions or errors. After that, you can start learning constraint programming with zython.
+However, there still seems to be quite a lot of code. But if we look closely, we can see that this is basically a variable declaration and an arithmetic equation, zython does all the dirty work, such as finding the solver, creating an instance, parameterizing it, running the model, and passing the solution to a python script. Everything you do is programming itself. In addition, zython provides the Python syntax for defining a model, which allows the IDE to isolate your code and check it for errors before running it. Zython additionally performs runtime checks.
+Creating a sudoku field. To do this, use zn.Array. An array can be either a variable or a parameter. Since the values in the cells of the Sudoku field are unknown at the time of launch and must be found, an array of variables is created in this case.
+The solution issued by the model will depend on the version of minizinc, I was given the following:
+Constraint programming is a concept worth learning, and it can save you time when solving a lot of problems: <a>create a schedule</a>, determine which units should be hired to have the strongest army under a given resource limit in your favorite strategy game, or help you determine the strongest assembly in your favorite role-playing game, what colors you should use to paint geographical regions on the map so that all neighboring areas have different colors, and even determine the optimal intervals in the movement of public transport and what cakes should be baked by your bakery to maximize profits.
+20
+c++,programming
+«Boost.Asio C++ Network Programming». Chapter 6: - Other features
+In this chapter, we'll look at some of the not-so-well-known features of Boost.Asio. The std streams and streambuf objects are sometimes a bit harder to use, but as you'll see for yourself, they have their advantages. Finally, you'll see a rather late addition to Boost.Asio-co-routines, which will allow you to have asynchronous code, but easy to read (as if it were synchronous). This is a pretty awesome feature.
+You must be familiar with objects such as STL streams and STL streambuf in order to understand the things written in this section.
+In Boost.Asio has two types of buffers for handling I / O:
+boost::asio::buffer()
+boost::asio::streambuf
+Throughout the book, you've mostly seen something like this:
+size_t read_complete(boost::system::error_code, size_t bytes){ ... }
+char buff[1024];
+read(sock, buffer(buff), read_complete);
+write(sock, buffer("echo\n"));
+Usually this will be enough for you. But if you want more flexibility, you can use streambuf. Here's the simplest and worst thing you can do with an objectstreambuf:
+This read will continue until the object is full streambuf, and since the streambuf object can reallocate itself to accommodate more space, basically, the read will continue until the connection is closed. You can use the function read_untilto read to the last character:
+Here, the read will go up to the ‘\n ' character, then what is read will be added to the buffer and exit the read function. To write something to an object, you will do something similar to the followingstreambuf
+This is quite simple: you need to create an STL stream, put a streambuf object there during construction, write the message you want to send to it, and then use the function write to send the contents of the buffer.
+C Boost.Asio has done a great job of integrating STL streams and networks. Namely, if you already use the STL extensively, then you should already have many classes with overloaded operators >> and <<. You'll enjoy reading and writing to sockets more than walking in the park.
+Let's say you have the following code snippet:
+Sending a person's data over the network is as easy as shown below:
+The really nice side of using objectsstreambuf , and of course the appropriate std::ostreamones for writing or std::istreamreading, is that you will eventually write code that will be considered normal:
+When writing something that will be transmitted over the network, it is very likely that you will have more than one piece of data. So, eventually, you will add data to the buffer. If this data is not a string, then you must first convert it to a string. All this happens by default when using the <<operator.
+The same thing happens on the other side, when reading the message; you need to parse it, that is, read one part of the data at a time, and if the data is not a string, you need to convert it. All this happens by default if you use the >>operator when reading.
+7
+python
+We put into practice the knowledge gained from the course An Introduction to Interactive Programming in Python (coursera.org)
+Based on this post.
+In the past 2012, I, like millions of other users, discovered free online training. It all started with a great startup called Codecademy. Wonderful courses about JavaScript, jQuery, Python, Ruby and others took up all my free time. A side effect was the practice of reading in English. By the middle of the year, the available lessons ended and I became interested in other sites where I could continue my self-study. Just at that time, articles about Coursera became more frequent on Habré and I decided to try it.
+The first course that attracted attention was An Introduction to Interactive Programming in Python from Rice University. Without thinking twice, I joined the ranks of online students.
+From the very first video lecture, the course's teachers (Joe Warren, Scott Rixner, Stephen Wong, John Greiner) encourage students to have a friendly atmosphere and a fun mood. Suffice it to say that the first project to study was writing a console version of the game " Stone. Scissors. Paper. Lizard. Spock.". For those who do not know, here are its rules.
+All programming in this course takes place in a special online sandbox, which is very convenient, since you do not need to carry sources and distributions everywhere with you, and all your experiments can be saved "in the clouds". How the Coursera learning process works is probably already known to the local public. The topics of lectures and projects by week were as follows:
+Each project is described in detail by teachers at the end of the lecture. Templates are provided for projects that already contain global variables, class constructors, and helper functions. It remains only to write the necessary methods and implement the output to the screen. I will not provide links to completed tasks in case someone decides to take this course. I did all the work as close as possible to the task at hand. And here is the final project of a friend who went beyond the required minimum and added all sorts of beautiful things: http://www.codeskulptor.org/#user7-0WgaPD23z9-0.py. By the way-0, at the end of the URL, this is the file version. Each time you save, the version is incremented and you can always view previous iterations. Such is the elegant Source Control.
+There is no exam at the end of the course, which may be why no confirmation of successful completion is given. However, during the course, a screencast contest was held among students, and two winners received iPads each.
+8
+telegrambot
+Telegram bot for weather forecast in Java Spring
+Hello, today we will create a simple bot for Telegram, which demonstrates the basic features of working with the Telegram API. It will work as follows:
+Everything is quite simple here, you need to write to @BotFather and follow his instructions. If you do everything correctly, you will receive a message like this:
+Our bot will receive data on the current weather, so the link API template will look like this: http://api.openweathermap.org/data/2.5/weather?q={city}&appid={key}&units=metric&lang=ru, where units=metric is responsible for the temperature measurement unit in Celsius.
+Project preparation
+Next, create an empty Spring Boot project using https://start.spring.io/, if you use IntelliJ IDEA, you can use the project's built-in Spring Boot initializer.
+After creating the project, we add the necessary dependencies:
+Our bot will use MongoDB to store configuration, as well as to store state relative to chats.
+Let's go through the necessary entities (documents):
+28
+telegrambot
+What is Telegram bot
+Telegram bots are programs specifically designed to interact with users on Telegram — the widely used messaging platform. From helping with various tasks to simulating human conversations, these bots help people be more productive, have fun and connect with their favorite brands via the messenger they use every day.
+To find and communicate with a bot, users can search within Telegram or open it via a direct link. On Telegram, bots can be identified by the suffix "bot" in their names. While normal bots are public, they can also be limited to certain users through private Telegram channels. Users interact with Telegram bots through text commands, typically starting with "/", however, its interface can be made more visual with a set of buttons for the most popular commands.
+Are Telegram bots safe?
+While Telegram bots are generally safe, using them requires necessary precautions to ensure a positive experience. While Telegram provides a bot API for developers, it's important to remember that not all bots offer the same level of security. One of the crucial aspects here is data privacy. View how a bot collects, handles, and stores personal data. Reading the privacy policy can provide insights into the bot's data practices and help users make informed decisions about sharing their data.
+In addition, users need to exercise caution when interacting with bots, especially when it comes to links and files. To mitigate risks, be mindful of the links you click on and only download files from trusted sources. Lastly, it is essential to be aware of fraudulent bots that aim to deceive users by promising free rewards or exclusive offers in return for payment or personal details. Consider the bot’s feedback and reviews from other users before sharing any valuable information with it.
+Telegram bots: noteworthy examples
+Created by both companies and an enthusiastic community, bots for Telegram come in many shapes and forms but always with a sole task: to expand Telegram messenger capabilities and offer some unique functionality. Let’s explore some of the most prominent examples of publicly available Telegram bots.
+Bot for Zoom calls: @zoombot
+Zoom Bot allows users to conveniently start video conferences and Zoom meetings from any Telegram conversation. The bot is a valuable tool for those who are already familiar with Telegram and want to streamline their video conferencing activities.
+Bot for creating polls: @ultimate_pollbot
+While there is a @Pollbot created by the Telegram team for simple polls, this opens-source bot comes with richer capabilities for customization as it allows users to make various polls, with single or multiple votes, anonymous or public votes, as well as manage multiple polls and conveniently view their results.
+Email address generator: @DropmailBot
+DropMail.me is a Telegram bot service that offers disposable email addresses to safeguard privacy and prevent spam. It generates temporary email addresses that are automatically deleted after ten minutes. This makes it an ideal solution for individuals who wish to keep their personal emails private and avoid unwanted emails.
+Paid-membership bot: @InviteMemberBot
+This membership bot platform allows the owners of paid Telegram channels to easily accept card and crypto payments for subscriptions and send invite links to new members of their groups and channels. The bot guides new users step-by-step, helping to set up a subscription-based business.
+Virus scanner bot: @DrWebBot
+When downloading files and media from the Internet, it's essential to prioritize safety. Dr. Web Bot addresses this concern by scanning all files and links transferred through your Telegram account. It can also be added to any group to automatically scan files shared in the chat. Additionally, if you want to individually check files for viruses, you can send them directly to the bot, and it will provide you with the scan results.
+Updates and promotions
+Telegram bots can be utilized to keep customers informed about new products, services, and company updates. Since Telegram is one of the most popular messaging apps, it can serve as an effective channel to share promotional messages that include not only text but media as well, consequently boosting sales and revenue by engaging customers with enticing offers.
+Bookings and reservations
+Telegram bots integrated into websites or dedicated platforms facilitate a smooth booking experience. Bots can interact with customers and provide real-time updates on the availability of tickets for cinema or tables for a restaurant. After all, a bot that guides you through the booking process in a familiar messenger seems an appealing alternative to downloading additional apps dedicated to reserving particular tickets or seats.
+Search and recommend products
+Ecommerce platforms can leverage Telegram bots to assist customers in finding products, checking inventory availability, and receiving personalized recommendations. Bots understand user queries, offer relevant search results, and deliver tailored product recommendations based on customer preferences.
+Returns and exchanges
+Another use case for Telegram bots that is super-relevant to online stores is the optimization of receiving and processing customer requests for returns and exchanges initiated by customers. Bots can guide customers through the necessary steps to return an item and receive a refund, automating the whole process, so that human support agents can focus on handling exceptional cases and ensure customer satisfaction.
+Feedback collection
+Using Telegram bots, companies can simplify the process of gathering customer feedback by promoting them to participate in interactive surveys. Thanks to natural language processing, bots can engage customers in natural conversations, ask targeted questions, and gather valuable insights to drive data-driven improvements and enhance customer satisfaction. Businesses can gain insights into areas for improvement, enabling them to refine their products and services accordingly. This ensures customer satisfaction and demonstrates a commitment to meeting customer needs.
+These use cases demonstrate the versatility and value of Telegram bots in various aspects of customer service and business operations. By leveraging these capabilities, companies can automate routine tasks, enhance customer experiences, increase operational efficiency, and ultimately drive business growth.
